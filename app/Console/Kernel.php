@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')
         //          ->hourly();
         // 每天的每小時更新資料
-        $schedule->command('updateProjectType:exec')
+        $schedule->command('curlConstellation:exec')
             ->hourly();
     }
 
