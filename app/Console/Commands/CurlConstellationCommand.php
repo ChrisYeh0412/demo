@@ -59,13 +59,6 @@ class CurlConstellationCommand extends Command
         $this->starSignList = $crawler->filterXPath('//div[@class="STAR12_BOX"]')->filter('a')->each(function (Crawler $node, $i) {
             return $node->text();
         });
-//        print_r($this->starSignList);
-//        print_r($this->linkList[0]);
-//        $content = $client->request('GET', $this->linkList[0])->getBody()->getContents();
-//        $crawler = resolve(Crawler::class);
-//        $crawler->addHtmlContent($content);
-//        print_r($crawler);
-
 
         $this->constellationCount = count($this->linkList);
 
@@ -78,13 +71,6 @@ class CurlConstellationCommand extends Command
                 };
             }
         };
-
-//        • 當天日期
-//        • 星座名稱
-//        • 整體運勢的評分及說明
-//        • 愛情運勢的評分及說明
-//        • 事業運勢的評分及說明
-//        • 財運運勢的評分及說明
 
         $pool = new Pool($client, $requests($this->constellationCount), [
             'concurrency' => $this->concurrency,
@@ -103,44 +89,31 @@ class CurlConstellationCommand extends Command
                 $data['date'] = date('Y-m-d');
                 $data['constellation_id'] = $constellationData['data']['id'];
 
-                $data['name'] = $contents[0];
-                $data['contents'] = $contents[1];
-                $data['type'] = 0;
-                $result = resolve(ConstellationDetailService::class)->addData($data);
-                if ($result['result']) {
-                    $this->info('成功');
-                } else {
-                    $this->error($result['error']['message']);
-                }
+                $contentsCount = count($contents);
+                $key = 0;
+                for($i=0; $i<$contentsCount; $i+=2) {
+                    $data['name'] = $contents[0+$i];
+                    $data['contents'] = $contents[1+$i];
+                    $data['type'] = $key;
 
-                $data['name'] = $contents[2];
-                $data['contents'] = $contents[3];
-                $data['type'] = 1;
-                $result = resolve(ConstellationDetailService::class)->addData($data);
-                if ($result['result']) {
-                    $this->info('成功');
-                } else {
-                    $this->error($result['error']['message']);
-                }
+                    $queryData = [];
+                    $queryData['constellation_id'] = $data['constellation_id'];
+                    $queryData['type'] = $data['type'];
+                    $queryData['date'] = $data['date'];
+                    $result = resolve(ConstellationDetailService::class)->getIdByDateAndType($queryData);
 
-                $data['name'] = $contents[4];
-                $data['contents'] = $contents[5];
-                $data['type'] = 2;
-                $result = resolve(ConstellationDetailService::class)->addData($data);
-                if ($result['result']) {
-                    $this->info('成功');
-                } else {
-                    $this->error($result['error']['message']);
-                }
-
-                $data['name'] = $contents[6];
-                $data['contents'] = $contents[7];
-                $data['type'] = 3;
-                $result = resolve(ConstellationDetailService::class)->addData($data);
-                if ($result['result']) {
-                    $this->info('成功');
-                } else {
-                    $this->error($result['error']['message']);
+                    if ($result['result']) {
+                        $data['id'] = $result['data']['id'];
+                        $result = resolve(ConstellationDetailService::class)->updateData($data);
+                    } else {
+                        $result = resolve(ConstellationDetailService::class)->addData($data);
+                    }
+                    $key++;
+                    if ($result['result']) {
+                        $this->info($this->starSignList[$index].'-'.$data['name'].'成功');
+                    } else {
+                        $this->error($result['error']['message']);
+                    }
                 }
 
                 $this->countedAndCheckEnded();
@@ -152,10 +125,8 @@ class CurlConstellationCommand extends Command
             },
         ]);
 
-        // 开始发送请求
         $promise = $pool->promise();
         $promise->wait();
-
         return true;
     }
 

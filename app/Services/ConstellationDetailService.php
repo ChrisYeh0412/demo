@@ -28,4 +28,8 @@ class ConstellationDetailService
     public function getKeyValueList() {
         return app(ConstellationDetailRepository::class)->getKeyValueList();
     }
+
+    public function getIdByDateAndType($queryData) {
+        return app(ConstellationDetailRepository::class)->getIdByDateAndType($queryData);
+    }
 }
