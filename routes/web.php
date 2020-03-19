@@ -22,6 +22,7 @@ Route::group(['namespace' => 'Auth'], function() {
     Route::get('login', 'LoginController@login')->name('login');
     Route::get('register', 'RegisterController@index')->name('register');
     Route::post('registerAction', 'RegisterController@registerAction')->name('registerAction');
+    Route::post('facebookRegisterAction', 'RegisterController@facebookRegisterAction')->name('facebookRegisterAction');
 });
 
 

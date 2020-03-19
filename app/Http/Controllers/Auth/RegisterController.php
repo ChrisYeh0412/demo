@@ -68,6 +68,26 @@ class RegisterController extends Controller
     }
 
     /**
+     * Get a validator for an incoming registration request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function facebookValidator(array $data)
+    {
+        return Validator::make($data, [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+            'fbid' => 'required',
+        ], [
+            'name.required' => '請填寫姓名',
+            'email.required' => '請填寫信箱',
+            'email.email' => '密碼格式有誤',
+            'fbid.required' => '請填寫密碼',
+        ]);
+    }
+
+    /**
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
@@ -111,6 +131,32 @@ class RegisterController extends Controller
             }
         } else {
             return redirect()->route('register')->with(['result' => 0, 'message' => $result['error']['message']]);
+        }
+    }
+    public function facebookRegisterAction(Request $request) {
+        $result = $this->facebookValidator($request->all());
+        if ($result->fails()) {
+            $message = '';
+            foreach ($result->getMessageBag()->toArray() as $value) {
+                $message .= implode('<br />', $value).'<br />';
+            }
+            return response()->json(['result' => 0, 'message' => $message]);
+        }
+        $data = [];
+        $data['name'] = $request->post('name');
+        $data['email'] = $request->post('email');
+        $data['fbid'] = $request->post('fbid');
+
+        $result = resolve(UserService::class)->checkExistEmail($data['email']);
+        if ($result['result']) {
+            $result = resolve(UserService::class)->addData($data);
+            if ($result['result']) {
+                return response()->json(['result' => 1, 'message' => $result['error']['message']]);
+            } else {
+                return response()->json(['result' => 0, 'message' => $result['error']['message']]);
+            }
+        } else {
+            return response()->json(['result' => 0, 'message' => $result['error']['message']]);
         }
     }
 }

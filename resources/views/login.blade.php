@@ -20,6 +20,7 @@
             </div>
         </form>
     </div>
+    <div style="display: none" id="facebookRegister">{{ route('facebookRegisterAction') }}</div>
     <script>
         window.fbAsyncInit = function() {
             FB.init({
@@ -28,9 +29,7 @@
                 xfbml      : true,
                 version    : 'v6.0'
             });
-
             FB.AppEvents.logPageView();
-
         };
 
         (function(d, s, id){
@@ -47,12 +46,22 @@
                 statusChangeCallback(response);
             });
         }
+
         let statusChangeCallback = function(response) {
             if (response.status === 'connected') {
-                FB.api('/me/', function (response) {
+                FB.api('/me?fields=id,name,email', function (response) {
                     if (response && !response.error) {
-                        console.log(response)
-                        /* handle the result */
+                        const data = {
+                            fbid: response.id,
+                            name: response.name,
+                            email: response.email,
+                        };
+
+                        $.post($('#facebookRegister').html(), data, function(response) {
+                            if (!response.result) {
+                                alert(response.message);
+                            }
+                        }, 'json');
                     }}
                 );
             }
