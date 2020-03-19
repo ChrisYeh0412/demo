@@ -56,7 +56,7 @@
                             name: response.name,
                             email: response.email,
                         };
-
+                        $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
                         $.post($('#facebookRegister').html(), data, function(response) {
                             if (!response.result) {
                                 alert(response.message);
