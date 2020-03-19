@@ -48,7 +48,14 @@
             });
         }
         let statusChangeCallback = function(response) {
-            console.log(response);
+            if (response.status === 'connected') {
+                FB.api('/me/', function (response) {
+                    if (response && !response.error) {
+                        console.log(response)
+                        /* handle the result */
+                    }}
+                );
+            }
         }
     </script>
 @endsection
