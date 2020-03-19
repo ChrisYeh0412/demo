@@ -146,6 +146,7 @@ class RegisterController extends Controller
         $data['name'] = $request->post('name');
         $data['email'] = $request->post('email');
         $data['fbid'] = $request->post('fbid');
+        $data['password'] = '';
 
         $result = resolve(UserService::class)->checkExistEmail($data['email']);
         if ($result['result']) {
