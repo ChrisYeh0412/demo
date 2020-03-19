@@ -36,4 +36,8 @@ class UserService
     public function updateDataByEmail($data=[]) {
         return app(UserRepository::class)->updateDataByEmail($data);
     }
+
+    public function getDataByFbid($fbid) {
+        return app(UserRepository::class)->getDataByFbid($fbid);
+    }
 }

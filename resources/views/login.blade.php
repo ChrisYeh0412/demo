@@ -21,6 +21,7 @@
         </form>
     </div>
     <div style="display: none" id="facebookRegister">{{ route('facebookRegisterAction') }}</div>
+    <div style="display: none" id="facebookLogin">{{ route('facebookLoginAction') }}</div>
     <script>
         window.fbAsyncInit = function() {
             FB.init({
@@ -42,12 +43,11 @@
 
         function checkLoginState() {
             FB.getLoginStatus(function(response) {
-                console.log(response);
-                statusChangeCallback(response);
+                facebookRegister(response);
             });
         }
 
-        let statusChangeCallback = function(response) {
+        let facebookRegister = function(response) {
             if (response.status === 'connected') {
                 FB.api('/me?fields=id,name,email', function (response) {
                     if (response && !response.error) {
@@ -60,11 +60,25 @@
                         $.post($('#facebookRegister').html(), data, function(response) {
                             if (!response.result) {
                                 alert(response.message);
+                            } else {
+                                facebookLogin(data.fbid);
                             }
                         }, 'json');
                     }}
                 );
             }
-        }
+        };
+        let facebookLogin = function(fbid) {
+            let data = {
+                fbid: fbid
+            };
+            $.post($('#facebookLogin').html(), data, function (response) {
+                if (!response.result) {
+                    alert(response.message);
+                } else {
+                    location.href= '/home';
+                }
+            }, 'json')
+        };
     </script>
 @endsection

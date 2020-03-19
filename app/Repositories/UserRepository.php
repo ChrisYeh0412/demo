@@ -165,4 +165,26 @@ class UserRepository
         }
         return $result;
     }
+
+    public function getDataByFbid($fbid) {
+        $result = [];
+        try {
+            $data = User::where('fbid', $fbid)->first();
+            if ($data) {
+                $result['result'] = 1;
+                $result['data'] = $data;
+                $result['error']['code'] = ErrorCodeConstant::ERROR_CODE_0000;
+                $result['error']['message'] = ErrorMessageConstant::ERROR_MESSAGE_0000;
+            } else {
+                $result['result'] = 0;
+                $result['error']['code'] = ErrorCodeConstant::ERROR_CODE_0004;
+                $result['error']['message'] = ErrorMessageConstant::ERROR_MESSAGE_0004;
+            }
+        } catch (\Exception $e) {
+            $result['result'] = 0;
+            $result['error']['code'] = ErrorCodeConstant::ERROR_CODE_0012;
+            $result['error']['message'] = ErrorMessageConstant::ERROR_MESSAGE_0012.ErrorMessageConstant::ERROR_MESSAGE.$e->getMessage();
+        }
+        return $result;
+    }
 }

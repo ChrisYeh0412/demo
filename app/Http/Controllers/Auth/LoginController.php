@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Services\UserService;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -54,6 +55,19 @@ class LoginController extends Controller
             return redirect()->route('home');
         } else {
             return redirect()->route('login')->with(['result' => 0, 'message' => '登入失敗']);
+        }
+    }
+
+    public function facebookLoginAction(Request $request)
+    {
+        $fbid = $request->input('fbid');
+        $result = resolve(UserService::class)->getDataByFbid($fbid);
+
+        if ($result['result']) {
+            Auth::login($result['data']);
+            return response()->json(['result' => 1, 'message' => $result['error']['message']]);
+        } else {
+            return response()->json(['result' => 0, 'message' => '登入失敗']);
         }
     }
 
