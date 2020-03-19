@@ -57,4 +57,7 @@
             width: 1000px;
             margin: 0 auto;
         }
+        div {
+            margin: 10px;
+        }
     </style>
