@@ -146,4 +146,23 @@ class UserRepository
         }
         return $result;
     }
+
+    public function updateDataByEmail($data) {
+        $result = [];
+        try {
+            if (!$user = User::select('*')->where('email', $data['email'])->first()) {
+                throw new \Exception(ErrorMessageConstant::ERROR_MESSAGE_0004);
+            }
+            $data['id'] = $user->id;
+            $result['result'] = 1;
+            $result['data'] = $user->update($data);
+            $result['error']['code'] = ErrorCodeConstant::ERROR_CODE_0000;
+            $result['error']['message'] = ErrorMessageConstant::ERROR_MESSAGE_0000;
+        } catch (\Exception $e) {
+            $result['result'] = 0;
+            $result['error']['code'] = ErrorCodeConstant::ERROR_CODE_0006;
+            $result['error']['message'] = ErrorMessageConstant::ERROR_MESSAGE_0006.ErrorMessageConstant::ERROR_MESSAGE.$e->getMessage();
+        }
+        return $result;
+    }
 }

@@ -32,4 +32,8 @@ class UserService
     public function getKeyValueList() {
         return app(UserRepository::class)->getKeyValueList();
     }
+
+    public function updateDataByEmail($data=[]) {
+        return app(UserRepository::class)->updateDataByEmail($data);
+    }
 }

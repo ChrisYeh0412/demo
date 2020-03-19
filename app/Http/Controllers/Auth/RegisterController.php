@@ -157,7 +157,14 @@ class RegisterController extends Controller
                 return response()->json(['result' => 0, 'message' => $result['error']['message']]);
             }
         } else {
-            return response()->json(['result' => 0, 'message' => $result['error']['message']]);
+            unset($data['name'], $data['password']);
+            $result = resolve(UserService::class)->updateDataByEmail($data);
+            if ($result['result']) {
+                return response()->json(['result' => 1, 'message' => $result['error']['message']]);
+            } else {
+                return response()->json(['result' => 0, 'message' => $result['error']['message']]);
+            }
+
         }
     }
 }
