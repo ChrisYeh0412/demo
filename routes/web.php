@@ -27,4 +27,5 @@ Route::group(['namespace' => 'Auth'], function() {
 
 Route::group(['middleware' => ['auth:web']], function(){
     Route::get('home', 'HomeController@index')->name('home');
+    Route::get('privacy', 'HomeController@privacy')->name('privacy');
 });

@@ -13,7 +13,42 @@
             <div>
                 <input type="submit" value="送出" style="margin-right: 5px;">
                 <a href="{{ route('register') }}">註冊</a>
+                <fb:login-button
+                        scope="public_profile,email"
+                        onlogin="checkLoginState();">
+                </fb:login-button>
             </div>
         </form>
     </div>
+    <script>
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId      : 639653423496399,
+                cookie     : true,
+                xfbml      : true,
+                version    : 6.0
+            });
+
+            FB.AppEvents.logPageView();
+
+        };
+
+        (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/zh_TW/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+        function checkLoginState() {
+            FB.getLoginStatus(function(response) {
+                console.log(response);
+                statusChangeCallback(response);
+            });
+        }
+        let statusChangeCallback = function(response) {
+            console.log(response);
+        }
+    </script>
 @endsection

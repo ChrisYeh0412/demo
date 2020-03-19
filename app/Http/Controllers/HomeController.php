@@ -12,4 +12,9 @@ class HomeController extends Controller
         return view('index', compact('data'));
     }
 
+    public function privacy() {
+        $data = [];
+        return view('privacy', compact('data'));
+    }
+
 }
